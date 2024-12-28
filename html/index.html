@@ -25,6 +25,8 @@
         <script>
             var whiteSquareGrey = '#a9a9a9';
             var blackSquareGrey = '#696969';
+            var redSquare = '#992211';
+            var greenSquare = '#11aa22';
             var game = new SheepWolf();
 
             var position = game.startGame();
@@ -39,23 +41,36 @@
             }
 
             function onDrop (source, target) {
-                removeGreySquares()
+                clearBackgrounds()
 
                 var move = game.move(source, target);
 
                 if (move === null) return 'snapback';
+
+                if (game.gameOver()) {
+                    if (game.sheepsWon()) {
+                        setBackground(game.getWolf(), redSquare);
+                        game.getSheeps().forEach((sheep) => setBackground(sheep, greenSquare));
+                    } else {
+                        setBackground(game.getWolf(), greenSquare);
+                        game.getSheeps().forEach((sheep) => setBackground(sheep, redSquare));
+                    }
+                    //alert('Game Over');
+                }
             }
 
-            function removeGreySquares () {
-                $('#board1 .square-55d63').css('background', '');
+            function clearBackgrounds () {
+                if (!game.gameOver()) {
+                    $('#board1 .square-55d63').css('background', '');
+                }
             }
 
-            function greySquare (square) {
+            function setBackground (square, whiteSquare, blackSquare) {
                 var $square = $('#board1 .square-' + square);
 
-                var background = whiteSquareGrey;
-                if ($square.hasClass('black-3c85d')) {
-                    background = blackSquareGrey;
+                var background = whiteSquare;
+                if (blackSquare && $square.hasClass('black-3c85d')) {
+                    background = blackSquare;
                 }
 
                 $square.css('background', background);
@@ -66,15 +81,15 @@
 
                 if (moves.length === 0) return;
 
-                greySquare(square);
+                setBackground(square, whiteSquareGrey, blackSquareGrey);
 
                 for (var i = 0; i < moves.length; i++) {
-                    greySquare(moves[i]);
+                    setBackground(moves[i], whiteSquareGrey, blackSquareGrey);
                 }
             }
 
             function onMouseoutSquare (square, piece) {
-                removeGreySquares();
+                clearBackgrounds();
             }
 
             var board = Chessboard('board1', {

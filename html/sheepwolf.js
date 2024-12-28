@@ -12,7 +12,7 @@ class SheepWolf {
     }
 
     gameOver() {
-        return false; // TODO
+        return this.wolfWon() || this.sheepsWon();
     }
 
     turn() {
@@ -34,6 +34,9 @@ class SheepWolf {
             this.#wolf = to;
             this.#turn = 'w';
         }
+        if (this.gameOver()) {
+            this.#turn = '';
+        }
         return true;
     }
 
@@ -42,10 +45,12 @@ class SheepWolf {
             if (!this.#sheeps.includes(from)) {
                 return [];
             }
-        } else {
+        } else if (this.#turn === 'b') {
             if (this.#wolf !== from) {
                 return [];
             }
+        } else {
+            return [];
         }
         return this.#possibleMoves(this.#turn, from);
     }
@@ -55,6 +60,14 @@ class SheepWolf {
         this.#wolf = 'd8';
         this.#turn = 'w';
         return '3p4/8/8/8/8/8/8/P1P1P1P1';
+    }
+
+    getWolf() {
+        return '' + this.#wolf;
+    }
+
+    getSheeps() {
+        return this.#sheeps.slice();
     }
 
     #neighbourLetters(letter) {
@@ -104,13 +117,13 @@ class SheepWolf {
         return Number(pos.charAt(1));
     }
 
-    #wolfWon() {
+    wolfWon() {
         let wolfRange = this.#posNumber(this.#wolf);
         let minSheepRange = Math.min.apply(Math, this.#sheeps.map(this.#posNumber));
         return wolfRange <= minSheepRange;
     }
 
-    #sheepsWon() {
+    sheepsWon() {
         return this.#possibleMoves('b', this.#wolf).length === 0;
     }
 
