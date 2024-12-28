@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: sheepwolf-game
