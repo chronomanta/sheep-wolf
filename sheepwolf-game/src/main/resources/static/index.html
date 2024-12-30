@@ -15,6 +15,8 @@
         <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
             integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
             crossorigin="anonymous"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
         
         <script src="sheepwolf.js"></script>
         
@@ -24,6 +26,12 @@
         <div id="board1" style="width: 600px"></div>
 
         <script>
+            const stompClient = new StompJs.Client({
+                brokerURL: 'ws://localhost:8080/socket'
+            });
+
+
+
             var whiteSquareGrey = '#a9a9a9';
             var blackSquareGrey = '#696969';
             var redSquare = '#992211';
@@ -48,6 +56,14 @@
 
                 if (move === null) return 'snapback';
 
+                stompClient.publish({
+                    destination: '/game/move',
+                    body: JSON.stringify({
+                        from: source,
+                        to: target
+                    })
+                });
+
                 if (game.gameOver()) {
                     if (game.sheepsWon()) {
                         setBackground(game.getWolf(), redSquare);
@@ -56,7 +72,6 @@
                         setBackground(game.getWolf(), greenSquare);
                         game.getSheeps().forEach((sheep) => setBackground(sheep, redSquare));
                     }
-                    //alert('Game Over');
                 }
             }
 
@@ -101,6 +116,31 @@
                 onMouseoutSquare: onMouseoutSquare,
                 onMouseoverSquare: onMouseoverSquare
             });
+
+            function applyMove(move) {
+                game.move(move.from, move.to);
+                board.move(move.from + '-' + move.to);
+                if (game.gameOver()) {
+                    if (game.sheepsWon()) {
+                        setBackground(game.getWolf(), redSquare);
+                        game.getSheeps().forEach((sheep) => setBackground(sheep, greenSquare));
+                    } else {
+                        setBackground(game.getWolf(), greenSquare);
+                        game.getSheeps().forEach((sheep) => setBackground(sheep, redSquare));
+                    }
+                }
+            }
+
+            stompClient.onConnect = (frame) => {
+                alert("WebSocket connected");
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/user/queue/move', (move) => {
+                    console.log('Received: ' + move.body);
+                    applyMove(JSON.parse(move.body));
+                });
+            };
+
+            stompClient.activate();
 
         </script>
     </body>
