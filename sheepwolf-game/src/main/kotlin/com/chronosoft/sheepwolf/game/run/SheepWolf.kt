@@ -1,6 +1,6 @@
 package com.chronosoft.sheepwolf.game.run
 
-import com.chronosoft.sheepwolf.game.model.Move
+import com.chronosoft.sheepwolf.game.model.event.Move
 import java.util.function.Consumer
 
 data class SheepWolf(
