@@ -1,0 +1,32 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+    <title>Games</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1> Games </h1>
+        </div>
+    </div>
+    <div class="row" th:each="game : ${games}">
+        <div class="col-md-4"><span th:text="${game.gameId}"> Game id </span></div>
+        <div class="col-md-4"><span th:text="${game.gameRequest.gameType}"> Game type </span></div>
+        <div class="col-md-2">
+            <a class="btn btn-info" href="#" th:href="@{/joinGame.html(gameId=${game.gameId})}">Join</a>
+        </div>
+        <div class="col-md-2">
+            <span th:text="${game.createTime}"> Created at </span>
+        </div>
+    </div>
+</div>
+</body>
+<footer>
+    <div class="container">
+        <div class="row">
+            <a class="btn btn-success" href="/randomGame.html">+ Create random game</a>
+        </div>
+    </div>
+</footer>
+</html>
