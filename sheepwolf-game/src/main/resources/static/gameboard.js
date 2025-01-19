@@ -142,9 +142,9 @@ class Gameboard {
         }
 
         if (winningColor === this.#side) {
-            setTimeout(() => alert('You won!'), 100);
+            setTimeout(alert, 500, 'You won!');
         } else {
-            setTimeout(() => alert('You lost!'), 100);
+            setTimeout(alert, 500, 'You lost!');
         }
 
     }
