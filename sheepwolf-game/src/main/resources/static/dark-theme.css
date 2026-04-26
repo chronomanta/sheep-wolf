@@ -360,6 +360,28 @@ main.board-main {
     margin-bottom: 12px;
 }
 
+.resign-progress {
+    width: 100%;
+    height: 4px;
+    background: #2a2d3e;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.resign-progress-bar {
+    height: 100%;
+    width: 100%;
+    background: #3b82f6;
+    border-radius: 999px;
+    animation: drain 3s linear forwards;
+}
+
+@keyframes drain {
+    from { width: 100%; }
+    to   { width: 0%; }
+}
+
 .btn-lobby {
     background: #3b82f6;
     color: #ffffff;

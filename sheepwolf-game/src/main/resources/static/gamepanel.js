@@ -1,13 +1,29 @@
 class GamePanel {
 
     #gameboard;
+    #stompClient;
 
-    constructor(gameboard) {
+    constructor(gameboard, stompClient) {
         this.#gameboard = gameboard;
-        this.#gameboard.onGameOver = (won) => this.#showGameOverModal(won);
+        this.#stompClient = stompClient;
+        this.#gameboard.onGameOver = (won) => this.#showResultModal(won ? 'win' : 'loss');
     }
 
-    #showGameOverModal(won) {
+    resign() {
+        this.#stompClient.subscribe('/user/queue/game-cancelled', () => {
+            this.#showResultModal('resign');
+        });
+        this.#gameboard.onGameOver = null; // Unsubscribe from game over to avoid showing two modals
+        this.#stompClient.publish({ destination: '/game/cancel' });
+    }
+
+    #showResultModal(result) {
+        const config = {
+            win:    { emoji: '🏆', title: 'Zwycięstwo!',  sub: 'Gratulacje, wygrałeś tę partię!',  redirect: false },
+            loss:   { emoji: '💀', title: 'Przegrana',    sub: 'Nie tym razem. Spróbuj jeszcze raz!', redirect: false },
+            resign: { emoji: '🏳️', title: 'Zrezygnowano', sub: 'Za chwilę wrócisz do lobby…',       redirect: true  },
+        }[result];
+
         const overlay = document.createElement('div');
         overlay.className = 'game-over-overlay';
 
@@ -16,27 +32,37 @@ class GamePanel {
 
         const emoji = document.createElement('div');
         emoji.className = 'game-over-emoji';
-        emoji.textContent = won ? '🏆' : '💀';
+        emoji.textContent = config.emoji;
 
         const title = document.createElement('div');
         title.className = 'game-over-title';
-        title.textContent = won ? 'Zwycięstwo!' : 'Przegrana';
+        title.textContent = config.title;
 
         const sub = document.createElement('div');
         sub.className = 'game-over-sub';
-        sub.textContent = won ? 'Gratulacje, wygrałeś tę partię!' : 'Nie tym razem. Spróbuj jeszcze raz!';
-
-        const btn = document.createElement('a');
-        btn.className = 'btn-lobby';
-        btn.href = '/';
-        btn.textContent = '← Wróć do lobby';
+        sub.textContent = config.sub;
 
         box.appendChild(emoji);
         box.appendChild(title);
         box.appendChild(sub);
-        box.appendChild(btn);
+
+        if (config.redirect) {
+            const progress = document.createElement('div');
+            progress.className = 'resign-progress';
+            const bar = document.createElement('div');
+            bar.className = 'resign-progress-bar';
+            progress.appendChild(bar);
+            box.appendChild(progress);
+            setTimeout(() => { window.location.href = '/'; }, 3000);
+        } else {
+            const btn = document.createElement('a');
+            btn.className = 'btn-lobby';
+            btn.href = '/';
+            btn.textContent = '← Wróć do lobby';
+            box.appendChild(btn);
+        }
+
         overlay.appendChild(box);
         document.body.appendChild(overlay);
     }
 }
-

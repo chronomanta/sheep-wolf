@@ -35,9 +35,9 @@
 </main>
 
 <footer class="footer-start">
-    <a class="btn-resign" href="/">
+    <button class="btn-resign" id="btn-resign" onclick="gamePanel.resign()">
         <span>✕</span> Rezygnuj i wróć do lobby
-    </a>
+    </button>
 </footer>
 
 <script>
@@ -50,7 +50,7 @@
     });
 
     const gameboard = new Gameboard('board', stompClient);
-    const gamePanel = new GamePanel(gameboard);
+    const gamePanel = new GamePanel(gameboard, stompClient);
 
     const gameIdFromQuery = new URLSearchParams(window.location.search).get('gameId');
 
