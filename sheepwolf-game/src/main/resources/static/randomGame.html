@@ -1,7 +1,10 @@
 <html lang="pl">
 <head>
-    <title>Wilk i owce</title>
+    <title>Wilki &amp; Owce – Gra</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="icon" type="image/webp" sizes="32x32" href="favicon.webp">
+    <link rel="stylesheet" href="/dark-theme.css"/>
 
     <link rel="stylesheet"
           href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
@@ -11,48 +14,82 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"
             integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"
             crossorigin="anonymous"></script>
-
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
             integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
             crossorigin="anonymous"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
-
     <script src="sheepwolf.js"></script>
-
     <script src="gameboard.js"></script>
-
 </head>
 
-<body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh">
-    <div id="board" style="width: 600px"></div>
+<body>
 
-    <script>
-        let loc = window.location;
-        let wsStart = loc.protocol === 'https:' ? 'wss://' : 'ws://';
-        let host = loc.host;
+<header>
+    <h1>🐺 Wilki &amp; Owce</h1>
+    <span class="badge">GRA</span>
+</header>
 
-        const stompClient = new StompJs.Client({
-            brokerURL: wsStart + host + '/socket'
+<main class="board-main">
+
+    <div class="game-wrapper">
+        <div id="board"></div>
+
+        <div id="waiting-overlay">
+            <div class="spinner"></div>
+            <span class="waiting-text">Oczekiwanie na przeciwnika…</span>
+            <span class="waiting-sub">Gra rozpocznie się automatycznie</span>
+        </div>
+    </div>
+
+    <div class="game-link-box" id="link-box" style="display:none">
+        <span>Link do gry:</span>
+        <a id="game-link" href="#"></a>
+    </div>
+
+</main>
+
+<footer class="footer-start">
+    <a class="btn-resign" href="/">
+        <span>✕</span> Rezygnuj i wróć do lobby
+    </a>
+</footer>
+
+<script>
+    let loc = window.location;
+    let wsStart = loc.protocol === 'https:' ? 'wss://' : 'ws://';
+    let host = loc.host;
+
+    const stompClient = new StompJs.Client({
+        brokerURL: wsStart + host + '/socket'
+    });
+
+    const gameboard = new Gameboard('board', stompClient);
+
+    gameboard.onGameStart = () => {
+        document.getElementById('waiting-overlay').classList.add('hidden');
+    };
+
+    stompClient.onConnect = (frame) => {
+        console.log('Connected: ' + frame);
+        gameboard.init();
+
+        stompClient.subscribe('/user/queue/game-created', (msg) => {
+            const data = JSON.parse(msg.body);
+            const joinUrl = loc.protocol + '//' + host + '/joinGame.html?gameId=' + data.gameId;
+            const linkEl = document.getElementById('game-link');
+            linkEl.href = joinUrl;
+            linkEl.textContent = joinUrl;
+            document.getElementById('link-box').style.display = 'flex';
         });
 
-        const gameboard = new Gameboard('board', stompClient);
+        stompClient.publish({
+            destination: '/game/create',
+            body: JSON.stringify({ gameType: 'ONLINE', metadata: {} })
+        });
+    };
 
-        stompClient.onConnect = (frame) => {
-            console.log('Connected: ' + frame);
-
-            gameboard.init();
-
-            stompClient.publish({
-                destination: '/game/create',
-                body: JSON.stringify({
-                    gameType: 'ONLINE',
-                    metadata: {}
-                })
-            });
-        };
-
-        stompClient.activate();
-    </script>
+    stompClient.activate();
+</script>
 </body>
 </html>
+

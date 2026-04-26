@@ -14,6 +14,8 @@ class Gameboard {
     #gameOver = false;
     #side = ' ';
 
+    onGameStart = null;
+
     constructor(boardSelector, stompClient) {
         this.#boardSelector = boardSelector;
         this.#stompClient = stompClient;
@@ -98,6 +100,7 @@ class Gameboard {
     }
 
     #onGameStart(side) {
+        if (typeof this.onGameStart === 'function') this.onGameStart();
         let game = this.#game;
         let gameboard = this;
 

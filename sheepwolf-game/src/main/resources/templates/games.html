@@ -1,32 +1,44 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pl">
 <head>
-    <title>Games</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <title>Wilki & Owce – Gry</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="/dark-theme.css"/>
 </head>
 <body>
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1> Games </h1>
+
+<header>
+    <h1>🐺 Wilki &amp; Owce</h1>
+    <span class="badge">LOBBY</span>
+</header>
+
+<main>
+    <p class="section-title">Dostępne gry</p>
+
+    <div class="game-list" th:if="${not #lists.isEmpty(games)}">
+        <div class="game-card" th:each="game : ${games}">
+            <div class="game-info">
+                <span class="game-id" th:text="${game.gameId}">game-id</span>
+                <div class="game-meta">
+                    <span class="game-type" th:text="${game.gameRequest.gameType}">Typ</span>
+                    <span class="game-time" th:text="${game.createTime}">2026-01-01 00:00</span>
+                </div>
+            </div>
+            <a class="btn-join" th:href="@{/joinGame.html(gameId=${game.gameId})}">Dołącz</a>
         </div>
     </div>
-    <div class="row" th:each="game : ${games}">
-        <div class="col-md-4"><span th:text="${game.gameId}"> Game id </span></div>
-        <div class="col-md-4"><span th:text="${game.gameRequest.gameType}"> Game type </span></div>
-        <div class="col-md-2">
-            <a class="btn btn-info" href="#" th:href="@{/joinGame.html(gameId=${game.gameId})}">Join</a>
-        </div>
-        <div class="col-md-2">
-            <span th:text="${game.createTime}"> Created at </span>
-        </div>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(games)}">
+        <div class="icon">🎲</div>
+        <p>Brak aktywnych gier. Utwórz nową!</p>
     </div>
-</div>
-</body>
+</main>
+
 <footer>
-    <div class="container">
-        <div class="row">
-            <a class="btn btn-success" href="/randomGame.html">+ Create random game</a>
-        </div>
-    </div>
+    <a class="btn-create" href="/randomGame.html">
+        <span>＋</span> Nowa losowa gra
+    </a>
 </footer>
+
+</body>
 </html>
