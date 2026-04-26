@@ -20,6 +20,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
     <script src="sheepwolf.js"></script>
     <script src="gameboard.js"></script>
+    <script src="gamepanel.js"></script>
 </head>
 
 <body>
@@ -67,6 +68,7 @@
     });
 
     const gameboard = new Gameboard('board', stompClient);
+    const gamePanel = new GamePanel(gameboard);
 
     gameboard.onGameStart = () => {
         document.getElementById('waiting-overlay').classList.add('hidden');

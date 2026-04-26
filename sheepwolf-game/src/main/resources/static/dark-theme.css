@@ -305,6 +305,84 @@ main.board-main {
     border-color: #3b82f6;
 }
 
+/* ── Game over modal ── */
+.game-over-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: fade-in 0.3s ease;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.game-over-box {
+    background: #1a1d2e;
+    border: 1px solid #2a2d3e;
+    border-radius: 16px;
+    padding: 48px 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+    animation: slide-up 0.3s ease;
+}
+
+@keyframes slide-up {
+    from { transform: translateY(24px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.game-over-emoji {
+    font-size: 4rem;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.game-over-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+.game-over-sub {
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin-bottom: 12px;
+}
+
+.btn-lobby {
+    background: #3b82f6;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 8px;
+}
+
+.btn-lobby:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+.btn-lobby:active {
+    transform: translateY(0);
+}
+
 /* ── Resign button ── */
 .btn-resign {
     background: transparent;

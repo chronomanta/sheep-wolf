@@ -30,6 +30,12 @@ data class GameController(
         return gameService.createGame(gameRequest, sessionId)
     }
 
+    @MessageMapping("/cancel")
+    @SendToUser("/queue/game-cancelled")
+    fun cancel(@Header("simpSessionId")sessionId: String) {
+        return gameService.finishGame(sessionId);
+    }
+
     @MessageMapping("/join")
     fun join(@Header("simpSessionId")sessionId: String, joinGameRequest: JoinGameRequest) {
         gameService.joinGame(joinGameRequest, sessionId)

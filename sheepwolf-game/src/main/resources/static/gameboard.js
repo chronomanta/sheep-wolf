@@ -15,6 +15,7 @@ class Gameboard {
     #side = ' ';
 
     onGameStart = null;
+    onGameOver = null;
 
     constructor(boardSelector, stompClient) {
         this.#boardSelector = boardSelector;
@@ -144,12 +145,9 @@ class Gameboard {
             this.#gameStarted = false;
         }
 
-        if (winningColor === this.#side) {
-            setTimeout(alert, 500, 'You won!');
-        } else {
-            setTimeout(alert, 500, 'You lost!');
+        if (typeof this.onGameOver === 'function') {
+            this.onGameOver(winningColor === this.#side);
         }
-
     }
 
 }
