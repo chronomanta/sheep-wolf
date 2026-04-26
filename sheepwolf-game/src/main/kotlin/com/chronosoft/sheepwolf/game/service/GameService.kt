@@ -30,6 +30,7 @@ data class GameService(
             gamesByUser[sessionId] = game
             gamesById[gameId] = game
             gamesDetails[gameId] = GameDetails(gameId, gameRequest, timeService.now())
+            broadcastGamesListChanged()
             return GameCreatedEvent(gameId)
         }
         throw IllegalArgumentException("Unsupported game type")
@@ -37,7 +38,9 @@ data class GameService(
 
     fun joinGame(joinGameRequest: JoinGameRequest, sessionId: String) {
         val game = gamesById.remove(joinGameRequest.gameId)?: throw IllegalArgumentException("Game not found")
-        gamesDetails.remove(joinGameRequest.gameId)
+        if (gamesDetails.remove(joinGameRequest.gameId) != null) {
+            broadcastGamesListChanged()
+        }
         game.join { side -> createOnlinePlayer(sessionId, side) }
         gamesByUser[sessionId] = game
     }
@@ -50,7 +53,9 @@ data class GameService(
     fun finishGame(sessionId: String) {
         val game = gamesByUser[sessionId]?: return
         gamesById.remove(game.id())
-        gamesDetails.remove(game.id())
+        if (gamesDetails.remove(game.id()) != null) {
+            broadcastGamesListChanged()
+        }
         game.finish(sessionId)
     }
 
@@ -84,10 +89,13 @@ data class GameService(
         headerAccessor.setLeaveMutable(true)
 
         simpMessagingTemplate.convertAndSendToUser(sessionId, destination, event, headerAccessor.messageHeaders)
-
     }
 
     private fun randomSide(): Side {
         return if (Random().nextBoolean()) Side.WOLF else Side.SHEEP
+    }
+
+    private fun broadcastGamesListChanged() {
+        simpMessagingTemplate.convertAndSend("/topic/games-list-changed", true)
     }
 }
