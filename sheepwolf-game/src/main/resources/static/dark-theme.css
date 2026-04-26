@@ -231,7 +231,7 @@ main.board-main {
     z-index: 10;
 }
 
-#waiting-overlay.hidden {
+#waiting-overlay.hidden, #link-box.hidden {
     display: none;
 }
 
@@ -267,12 +267,11 @@ main.board-main {
     border: 1px solid #2a2d3e;
     border-radius: 10px;
     padding: 14px 20px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 12px;
     font-size: 0.85rem;
-    max-width: 560px;
-    width: 90vw;
+    max-width: 90vw;
 }
 
 .game-link-box span {
@@ -280,14 +279,30 @@ main.board-main {
     white-space: nowrap;
 }
 
-.game-link-box a {
-    color: #93c5fd;
+.game-link-text {
+    color: #e0e0e0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.82rem;
     word-break: break-all;
-    text-decoration: none;
+    flex: 1;
 }
 
-.game-link-box a:hover {
-    text-decoration: underline;
+.btn-copy {
+    background: #2a2d3e;
+    border: 1px solid #3a3d4e;
+    border-radius: 6px;
+    color: #e0e0e0;
+    cursor: pointer;
+    padding: 4px 10px;
+    font-size: 1rem;
+    line-height: 1;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-copy:hover {
+    background: #3b82f6;
+    border-color: #3b82f6;
 }
 
 /* ── Resign button ── */

@@ -41,9 +41,12 @@
         </div>
     </div>
 
-    <div class="game-link-box" id="link-box" style="display:none">
+    <div class="game-link-box hidden" id="link-box">
         <span>Link do gry:</span>
-        <a id="game-link" href="#"></a>
+        <span id="game-link-text" class="game-link-text"></span>
+        <button class="btn-copy" id="btn-copy" onclick="copyGameLink()" title="Skopiuj link">
+            <span id="copy-icon">📋</span>
+        </button>
     </div>
 
 </main>
@@ -67,6 +70,7 @@
 
     gameboard.onGameStart = () => {
         document.getElementById('waiting-overlay').classList.add('hidden');
+        document.getElementById('link-box').classList.add('hidden');
     };
 
     stompClient.onConnect = (frame) => {
@@ -76,10 +80,9 @@
         stompClient.subscribe('/user/queue/game-created', (msg) => {
             const data = JSON.parse(msg.body);
             const joinUrl = loc.protocol + '//' + host + '/joinGame.html?gameId=' + data.gameId;
-            const linkEl = document.getElementById('game-link');
-            linkEl.href = joinUrl;
-            linkEl.textContent = joinUrl;
-            document.getElementById('link-box').style.display = 'flex';
+            document.getElementById('game-link-text').textContent = joinUrl;
+            document.getElementById('btn-copy').dataset.url = joinUrl;
+            document.getElementById('link-box').classList.remove('hidden');
         });
 
         stompClient.publish({
@@ -89,6 +92,15 @@
     };
 
     stompClient.activate();
+
+    function copyGameLink() {
+        const url = document.getElementById('btn-copy').dataset.url;
+        navigator.clipboard.writeText(url).then(() => {
+            const icon = document.getElementById('copy-icon');
+            icon.textContent = '✅';
+            setTimeout(() => { icon.textContent = '📋'; }, 2000);
+        });
+    }
 </script>
 </body>
 </html>
