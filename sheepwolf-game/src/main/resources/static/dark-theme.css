@@ -266,25 +266,23 @@ main.board-main {
     background: #1a1d2e;
     border: 1px solid #2a2d3e;
     border-radius: 10px;
-    padding: 14px 20px;
+    padding: 16px 20px;
     display: inline-flex;
+    flex-direction: column;
     align-items: center;
     gap: 12px;
     font-size: 0.85rem;
     max-width: 90vw;
 }
 
-.game-link-box span {
+.game-link-box .link-label {
     color: #6b7280;
     white-space: nowrap;
 }
 
-.game-link-text {
-    color: #e0e0e0;
-    font-family: 'Courier New', monospace;
-    font-size: 0.82rem;
-    word-break: break-all;
-    flex: 1;
+#game-qr, #game-qr img, #game-qr canvas {
+    border-radius: 6px;
+    display: block;
 }
 
 .btn-copy {
@@ -379,7 +377,7 @@ main.board-main {
 
 @keyframes drain {
     from { width: 100%; }
-    to   { width: 0%; }
+    to   { width: 0; }
 }
 
 .btn-lobby {

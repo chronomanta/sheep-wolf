@@ -18,9 +18,11 @@
             integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
             crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <script src="sheepwolf.js"></script>
     <script src="gameboard.js"></script>
     <script src="gamepanel.js"></script>
+
 </head>
 
 <body>
@@ -43,11 +45,11 @@
     </div>
 
     <div class="game-link-box hidden" id="link-box">
-        <span>Link do gry:</span>
-        <span id="game-link-text" class="game-link-text"></span>
-        <button class="btn-copy" id="btn-copy" onclick="copyGameLink()" title="Skopiuj link">
-            <span id="copy-icon">📋</span>
+        <span class="link-label">Zaproś przeciwnika:</span>
+        <button class="btn-copy" id="btn-copy" onclick="copyGameLink()" title="Skopiuj link do gry">
+            <span id="copy-icon">📋</span> Skopiuj link
         </button>
+        <div id="game-qr"></div>
     </div>
 
 </main>
@@ -79,13 +81,7 @@
         console.log('Connected: ' + frame);
         gameboard.init();
 
-        stompClient.subscribe('/user/queue/game-created', (msg) => {
-            const data = JSON.parse(msg.body);
-            const joinUrl = loc.protocol + '//' + host + '/joinGame.html?gameId=' + data.gameId;
-            document.getElementById('game-link-text').textContent = joinUrl;
-            document.getElementById('btn-copy').dataset.url = joinUrl;
-            document.getElementById('link-box').classList.remove('hidden');
-        });
+        stompClient.subscribe('/user/queue/game-created', (msg) => gameCreated(msg));
 
         stompClient.publish({
             destination: '/game/create',
@@ -102,6 +98,20 @@
             icon.textContent = '✅';
             setTimeout(() => { icon.textContent = '📋'; }, 2000);
         });
+    }
+
+    function gameCreated(msg) {
+        const data = JSON.parse(msg.body);
+        const joinUrl = loc.protocol + '//' + host + '/joinGame.html?gameId=' + data.gameId;
+        document.getElementById('btn-copy').dataset.url = joinUrl;
+        new QRCode(document.getElementById('game-qr'), {
+            text: joinUrl,
+            width: 180,
+            height: 180,
+            colorDark: '#e0e0e0',
+            colorLight: '#1a1d2e'
+        });
+        document.getElementById('link-box').classList.remove('hidden');
     }
 </script>
 </body>
