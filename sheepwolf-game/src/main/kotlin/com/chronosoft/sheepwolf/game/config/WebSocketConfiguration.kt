@@ -11,7 +11,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 class WebSocketConfiguration : WebSocketMessageBrokerConfigurer {
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
-        registry.addEndpoint("/socket").setAllowedOriginPatterns("*")
+        registry.addEndpoint("/socket").setAllowedOriginPatterns("https://*.alo-nurt.pl", "http://localhost:*", "https://localhost:*")
     }
 
     override fun configureMessageBroker(config: MessageBrokerRegistry) {
