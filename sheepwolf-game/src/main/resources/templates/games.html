@@ -11,7 +11,10 @@
 
 <header>
     <h1>🐺 Wilki &amp; Owce</h1>
-    <span class="badge">LOBBY</span>
+    <div class="header-badges">
+        <span class="badge">LOBBY</span>
+        <span class="badge badge-players">👥 Gracze online: <span id="players-count">–</span></span>
+    </div>
 </header>
 
 <main>
@@ -53,9 +56,26 @@
         brokerURL: wsStart + host + '/socket'
     });
 
+    function updatePlayersCount(playersCount) {
+        const el = document.getElementById('players-count');
+        if (el) el.textContent = playersCount;
+    }
+
+    function applyOverview(overview) {
+        updatePlayersCount(overview.playersCount);
+    }
+
     stompClient.onConnect = () => {
         stompClient.subscribe('/topic/games-list-changed', () => {
             window.location.reload();
+        });
+
+        stompClient.subscribe('/user/queue/overview', (response) => applyOverview(JSON.parse(response.body)));
+
+        stompClient.subscribe('/topic/players-count', (response) => updatePlayersCount(response.body));
+
+        stompClient.publish({
+            destination: '/sheepwolf/lobby/overview'
         });
     };
 

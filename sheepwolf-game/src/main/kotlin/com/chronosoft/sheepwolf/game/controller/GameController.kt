@@ -13,37 +13,25 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 
 
-
 @Controller
+@MessageMapping("/game")
 data class GameController(
     val gameService: GameService
 ) {
-
     @EventListener
-    fun onDisconnectEvent(event: SessionDisconnectEvent) {
-        gameService.finishGame(event.sessionId)
-    }
+    fun onDisconnectEvent(event: SessionDisconnectEvent) = gameService.finishGame(event.sessionId)
 
     @MessageMapping("/create")
     @SendToUser("/queue/game-created")
-    fun create(@Header("simpSessionId")sessionId: String, gameRequest: GameRequest): GameCreatedEvent {
-        return gameService.createGame(gameRequest, sessionId)
-    }
+    fun create(@Header("simpSessionId")sessionId: String, gameRequest: GameRequest): GameCreatedEvent = gameService.createGame(gameRequest, sessionId)
 
     @MessageMapping("/cancel")
     @SendToUser("/queue/game-cancelled")
-    fun cancel(@Header("simpSessionId")sessionId: String): Boolean {
-        gameService.finishGame(sessionId);
-        return true;
-    }
+    fun cancel(@Header("simpSessionId")sessionId: String) = gameService.finishGame(sessionId)
 
     @MessageMapping("/join")
-    fun join(@Header("simpSessionId")sessionId: String, joinGameRequest: JoinGameRequest) {
-        gameService.joinGame(joinGameRequest, sessionId)
-    }
+    fun join(@Header("simpSessionId")sessionId: String, joinGameRequest: JoinGameRequest) = gameService.joinGame(joinGameRequest, sessionId)
 
     @MessageMapping("/move")
-    fun move(@Header("simpSessionId")sessionId: String, move: Move) {
-        gameService.move(move, sessionId)
-    }
+    fun move(@Header("simpSessionId")sessionId: String, move: Move) = gameService.move(move, sessionId)
 }

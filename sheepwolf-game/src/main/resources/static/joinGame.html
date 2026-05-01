@@ -60,7 +60,7 @@
         gameboard.init();
 
         stompClient.publish({
-            destination: '/game/join',
+            destination: '/sheepwolf/game/join',
             body: JSON.stringify({
                 gameId: gameIdFromQuery
             })

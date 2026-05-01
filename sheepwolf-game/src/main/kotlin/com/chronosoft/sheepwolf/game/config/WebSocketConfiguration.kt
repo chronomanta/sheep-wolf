@@ -15,7 +15,7 @@ class WebSocketConfiguration : WebSocketMessageBrokerConfigurer {
     }
 
     override fun configureMessageBroker(config: MessageBrokerRegistry) {
-        config.setApplicationDestinationPrefixes("/game")
+        config.setApplicationDestinationPrefixes("/sheepwolf")
         config.enableSimpleBroker("/topic", "/queue")
     }
 }

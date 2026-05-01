@@ -14,7 +14,7 @@ class GamePanel {
             this.#showResultModal('resign');
         });
         this.#gameboard.onGameOver = null; // Unsubscribe from game over to avoid showing two modals
-        this.#stompClient.publish({ destination: '/game/cancel' });
+        this.#stompClient.publish({ destination: '/sheepwolf/game/cancel' });
     }
 
     #showResultModal(result) {

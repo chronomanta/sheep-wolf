@@ -50,7 +50,7 @@ class Gameboard {
         if (move === null) return 'snapback';
 
         this.#stompClient.publish({
-            destination: '/game/move',
+            destination: '/sheepwolf/game/move',
             body: JSON.stringify({
                 from: source,
                 to: target

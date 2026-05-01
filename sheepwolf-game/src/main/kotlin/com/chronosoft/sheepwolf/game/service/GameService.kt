@@ -95,7 +95,6 @@ data class GameService(
         return if (Random().nextBoolean()) Side.WOLF else Side.SHEEP
     }
 
-    private fun broadcastGamesListChanged() {
-        simpMessagingTemplate.convertAndSend("/topic/games-list-changed", true)
-    }
+    private fun broadcastGamesListChanged() = simpMessagingTemplate.convertAndSend("/topic/games-list-changed", true)
+
 }

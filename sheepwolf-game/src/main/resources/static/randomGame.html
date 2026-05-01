@@ -84,7 +84,7 @@
         stompClient.subscribe('/user/queue/game-created', (msg) => gameCreated(msg));
 
         stompClient.publish({
-            destination: '/game/create',
+            destination: '/sheepwolf/game/create',
             body: JSON.stringify({ gameType: 'ONLINE', metadata: {} })
         });
     };
