@@ -26,12 +26,14 @@
 <body>
 
 <header>
-    <h1>🐺 Wilki &amp; Owce</h1>
+    <h1><img src="/favicon.png" alt="🐺"> Wilki &amp; Owce</h1>
     <span class="badge">GRA</span>
 </header>
 
 <main class="board-main">
-    <div id="board"></div>
+    <div class="game-wrapper" id="game-wrapper">
+        <div id="board"></div>
+    </div>
 </main>
 
 <footer class="footer-start">
@@ -51,6 +53,7 @@
 
     const gameboard = new Gameboard('board', stompClient);
     const gamePanel = new GamePanel(gameboard, stompClient);
+
 
     const gameIdFromQuery = new URLSearchParams(window.location.search).get('gameId');
 
