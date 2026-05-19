@@ -24,6 +24,14 @@ header h1 {
     font-weight: 700;
     color: #ffffff;
     letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+header h1 img {
+    width: 1em;
+    height: 1em;
 }
 
 .badge {
@@ -193,6 +201,26 @@ footer.footer-start {
     justify-content: flex-start;
 }
 
+
+main, header, footer { position: relative; z-index: 1; }
+
+/* ── Favicon background watermark (decorative) ── */
+.bg-watermark {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.bg-watermark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('/favicon.png') no-repeat center center;
+    background-size: min(60vw, 60vh);
+    opacity: 0.05;
+}
+
 /* ── Board page layout ── */
 main.board-main {
     display: flex;
@@ -215,6 +243,9 @@ main.board-main {
     align-items: center;
     gap: 24px;
 }
+
+
+#board { position: relative; z-index: 1; }
 
 /* ── Waiting overlay ── */
 #waiting-overlay {
