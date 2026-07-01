@@ -5,6 +5,7 @@ import com.chronosoft.sheepwolf.game.model.JoinGameRequest
 import com.chronosoft.sheepwolf.game.model.event.GameCreatedEvent
 import com.chronosoft.sheepwolf.game.model.event.Move
 import com.chronosoft.sheepwolf.game.service.GameService
+import com.chronosoft.sheepwolf.game.service.OverviewService
 import org.springframework.context.event.EventListener
 import org.springframework.messaging.handler.annotation.Header
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -16,14 +17,18 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent
 @Controller
 @MessageMapping("/game")
 data class GameController(
-    val gameService: GameService
+    val gameService: GameService,
+    val overviewService: OverviewService
 ) {
     @EventListener
     fun onDisconnectEvent(event: SessionDisconnectEvent) = gameService.finishGame(event.sessionId)
 
     @MessageMapping("/create")
     @SendToUser("/queue/game-created")
-    fun create(@Header("simpSessionId")sessionId: String, gameRequest: GameRequest): GameCreatedEvent = gameService.createGame(gameRequest, sessionId)
+    fun create(@Header("simpSessionId")sessionId: String, gameRequest: GameRequest): GameCreatedEvent {
+        overviewService.playerEnters(sessionId)
+        return gameService.createGame(gameRequest, sessionId)
+    }
 
     @MessageMapping("/cancel")
     @SendToUser("/queue/game-cancelled")
@@ -33,7 +38,10 @@ data class GameController(
     }
 
     @MessageMapping("/join")
-    fun join(@Header("simpSessionId")sessionId: String, joinGameRequest: JoinGameRequest) = gameService.joinGame(joinGameRequest, sessionId)
+    fun join(@Header("simpSessionId")sessionId: String, joinGameRequest: JoinGameRequest) {
+        overviewService.playerEnters(sessionId)
+        gameService.joinGame(joinGameRequest, sessionId)
+    }
 
     @MessageMapping("/move")
     fun move(@Header("simpSessionId")sessionId: String, move: Move) = gameService.move(move, sessionId)
